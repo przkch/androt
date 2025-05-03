@@ -2,6 +2,7 @@
 # /// script
 # requires-python = ">=3.13"
 # dependencies = [
+#     "pandas",
 #     "pyyaml",
 #     "requests",
 # ]
@@ -9,16 +10,44 @@
 
 import json
 import yaml
+import pandas as pd
 import requests
 
 
 def getPlayDevices():
-    url = "https://raw.githubusercontent.com/teqcorp/play_certified_devices/main/devices.json"
+    url = "http://storage.googleapis.com/play_public/supported_devices.csv"
 
-    response = requests.get(url)
-    response.raise_for_status()
+    df = pd.read_csv(url, encoding="utf-16")
 
-    return response.json()
+    devices = []
+
+    for line in df.itertuples():
+        retail_branding = str(line[1])
+        marketing_name = str(line[2])
+        device = str(line[3])
+        model = str(line[4])
+
+        if marketing_name.lower().startswith(retail_branding.lower()):
+            name = f"{marketing_name} ({model})"
+        elif marketing_name.lower() == retail_branding.lower():
+            name = f"{retail_branding} {model}"
+        else:
+            name = f"{retail_branding} {marketing_name} ({model})"
+
+        devices.append(
+            {
+                "codename": device,
+                "retail_branding": retail_branding,
+                "marketing_name": marketing_name,
+                "model": model,
+                "name": name,
+            }
+        )
+
+    with open("play_devices.json", "w") as f:
+        f.write(json.dumps(devices).replace("},", "},\n"))
+
+    return devices
 
 
 def getLocalDevices():
