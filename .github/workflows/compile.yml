@@ -1,0 +1,28 @@
+name: Compile devices list
+
+on:
+  push:
+  schedule:
+    - cron: "0 20 * * *"
+
+jobs:
+  count:
+    name: Generate devices list
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Get current date
+        id: date
+        run: echo "date=$(date +'%Y-%m-%d')" >> $GITHUB_OUTPUT
+
+      - name: Install the latest version of uv
+        uses: astral-sh/setup-uv@v6
+
+      - name: Compile devices list
+        run: |
+          uv run main.py
+
+      - uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          commit_message: Compile devices list (${{ steps.date.outputs.date }})
+          file_pattern: devices.json
