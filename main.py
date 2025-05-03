@@ -21,13 +21,9 @@ def getPlayDevices():
     return response.json()
 
 
-def getMobileDBDevices():
-    url = "https://raw.githubusercontent.com/teqcorp/mobiledb_database/refs/heads/main/devices.yml"
-
-    response = requests.get(url)
-    response.raise_for_status()
-
-    data = yaml.load(response.text, Loader=yaml.CLoader)
+def getLocalDevices():
+    with open("local.yml") as f:
+        data = yaml.load(f.read(), Loader=yaml.CLoader)
 
     devices = []
 
@@ -153,7 +149,7 @@ def main():
     # TODO: Sort this list
     devices = (
         *getPlayDevices(),
-        *getMobileDBDevices(),
+        *getLocalDevices(),
         *getLineageDevices(),
         *getMobileModels(),
     )
