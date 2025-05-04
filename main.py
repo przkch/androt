@@ -10,6 +10,7 @@
 
 import json
 import yaml
+import os
 import pandas as pd
 import requests
 
@@ -44,8 +45,10 @@ def getPlayDevices():
             }
         )
 
-    with open("play_devices.json", "w") as f:
-        f.write(json.dumps(devices).replace("},", "},\n"))
+    with open("dist/play_devices.json", "w") as f:
+        f.write(json.dumps(devices, indent=2))
+    with open("dist/play_devices.min.json", "w") as f:
+        f.write(json.dumps(devices))
 
     return devices
 
@@ -175,6 +178,9 @@ def getMobileModels():
 
 
 def main():
+    if not os.path.exists("dist/"):
+        os.makedirs("dist/")
+
     # TODO: Sort this list
     devices = (
         *getPlayDevices(),
@@ -183,8 +189,10 @@ def main():
         *getMobileModels(),
     )
 
-    with open("devices.json", "w") as f:
-        f.write(json.dumps(devices).replace("},", "},\n"))
+    with open("dist/devices.json", "w") as f:
+        f.write(json.dumps(devices, indent=2))
+    with open("dist/devices.min.json", "w") as f:
+        f.write(json.dumps(devices))
 
 
 if __name__ == "__main__":
