@@ -28,3 +28,5 @@ jobs:
         with:
           commit_message: Compile devices list (${{ steps.date.outputs.date }})
           file_pattern: dist/*.json
+          branch: dist
+          create_branch: true
