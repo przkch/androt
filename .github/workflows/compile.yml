@@ -30,3 +30,4 @@ jobs:
           file_pattern: dist/*.json
           branch: dist
           create_branch: true
+          push_options: "--force"
